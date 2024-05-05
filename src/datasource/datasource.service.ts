@@ -6,27 +6,27 @@ import { Teacher } from 'src/teachers/teacher.entity';
 @Injectable()
 export class DatasourceService {
   private groups: Group[] = [
-    {
-      name: 'БИВТ',
-      entryYear: 22,
-      groupNumber: 1,
-      course: 2,
-      institute: 'ИКН',
-      studentsCount: 30,
-      head: 'Голокова Софья',
-    },
+    // {
+    //   id: 1,
+    //   name: 'БИВТ',
+    //   entryYear: 22,
+    //   groupNumber: 1,
+    //   course: 2,
+    //   institute: 'ИКН',
+    //   students: [],
+    // },
   ];
 
   private students: Student[] = [
-    {
-      id: 1,
-      name: 'Sergey',
-      age: 19,
-      groupId: 'БИВТ-22-1',
-    },
+    // {
+    //   id: 1,
+    //   name: 'Sergey',
+    //   age: 19,
+    //   groupId: 'БИВТ-22-1',
+    // },
   ];
 
-  private teachers: Teacher[] = [new Teacher(1, 'Ulvi', 'Rksp')];
+  private teachers: Teacher[] = [];
 
   getGroups(): Group[] {
     return this.groups;

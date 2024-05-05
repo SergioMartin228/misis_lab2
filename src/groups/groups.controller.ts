@@ -1,10 +1,10 @@
+import { CreateGroupDto } from './dto/CreateGroup.dto';
 import { Group } from './group.entity';
 import { GroupsService } from './groups.service';
 import {
   Controller,
   Get,
   Param,
-  NotFoundException,
   Put,
   Post,
   Delete,
@@ -21,71 +21,47 @@ export class GroupsController {
     return this.groupsService.findAll();
   }
 
-  @Get(':name/:entryYear/:groupNumber')
-  findOne(
-    @Param('name') name: string,
-    @Param('entryYear') entryYear: string,
-    @Param('groupNumber') groupNumber: string,
-  ) {
-    // const year = parseInt(entryYear, 10);
-    // const number = parseInt(groupNumber, 10);
-    const group = this.groupsService.findOne(name, +entryYear, +groupNumber);
+  @Get('incomplete')
+  findIncomplete() {
+    return this.groupsService.findIncomplete();
+  }
 
-    if (!group) {
-      // Группа не найдена
-      throw new NotFoundException(
-        `Group ${name}-${entryYear}-${groupNumber} not found.`,
-      );
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    const group = this.groupsService.findOne(+id);
+    // if (!group) {
+    //   // Группа не найдена
+    //   throw new NotFoundException(`Group with id ${id} not found.`);
+    // }
     return group;
   }
 
-  @Put(':name/:entryYear/:groupNumber')
-  update(
-    @Param('name') name: string,
-    @Param('entryYear') entryYear: string,
-    @Param('groupNumber') groupNumber: string,
-    @Body() updatedGroup: Group,
-  ) {
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updatedGroup: Group) {
     // const year = parseInt(entryYear, 10);
     // const number = parseInt(groupNumber, 10);
-    const result = this.groupsService.update(
-      name,
-      +entryYear,
-      +groupNumber,
-      updatedGroup,
-    );
-    if (!result)
-      throw new NotFoundException(
-        `Group ${name}-${entryYear}-${groupNumber} not found.`,
-      );
+    const result = this.groupsService.update(+id, updatedGroup);
+    // if (!result) throw new NotFoundException(`Group with id ${id} not found.`);
     return result;
   }
 
   @Post()
-  create(@Body() newGroup: Group) {
+  create(@Body() newGroup: CreateGroupDto) {
     const result = this.groupsService.create(newGroup);
-    if (!result)
-      throw new ForbiddenException(
-        `Group ${newGroup.name}-${newGroup.entryYear}-${newGroup.groupNumber} already exists.`,
-      );
+    // if (!result)
+    //   throw new ForbiddenException(
+    //     `Group ${newGroup.name} with id ${newGroup.id} already exists.`,
+    //   );
 
     return result;
   }
 
-  @Delete(':name/:entryYear/:groupNumber')
-  remove(
-    @Param('name') name: string,
-    @Param('entryYear') entryYear: string,
-    @Param('groupNumber') groupNumber: string,
-  ) {
+  @Delete(':id')
+  remove(@Param('id') id: string) {
     // const year = parseInt(entryYear, 10);
     // const number = parseInt(groupNumber, 10);
-    const result = this.groupsService.remove(name, +entryYear, +groupNumber);
-    if (!result)
-      throw new NotFoundException(
-        `Group ${name}-${entryYear}-${groupNumber} not found.`,
-      );
+    const result = this.groupsService.remove(+id);
+    // if (!result) throw new NotFoundException(`Group with id ${id} not found.`);
     return result;
   }
 }

@@ -1,14 +1,25 @@
-export class Teacher {
-    id: number; // Уникальный идентификатор
-    name: string; // Имя преподавателя
-    subject: string; // Предмет
-    groupIds: string[]; // Группы, у которых ведет этот преподаватель
+import { Group } from 'src/groups/group.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 
-    constructor(id: number, name: string, subject: string) {
-        this.id = id;
-        this.name = name;
-        this.subject = subject;
-        this.groupIds = [];
-      }
-  }
-  
+@Entity('teacher')
+export class Teacher {
+  @PrimaryGeneratedColumn()
+  id: number; // Уникальный идентификатор
+  @Column()
+  name: string; // Имя преподавателя
+  @Column()
+  subject: string; // Предмет
+  @ManyToMany(() => Group, (group) => group.teachers)
+  @JoinTable({
+    name: 'teacher_group',
+    joinColumn: { name: 'teacher_id' },
+    inverseJoinColumn: { name: 'group_id' },
+  })
+  groups: Group[]; // Группы, у которых ведет этот преподаватель
+}

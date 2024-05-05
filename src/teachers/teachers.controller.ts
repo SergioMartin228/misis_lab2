@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { Teacher } from './teacher.entity';
+import { CreateTeacherDto } from './dto/CreateTeacher.dto';
 
 @Controller('teachers')
 export class TeachersController {
@@ -24,42 +25,42 @@ export class TeachersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     const teacher = this.teacherService.findOne(+id);
-    if (!teacher) throw new NotFoundException(`Teacher ${id} not found.`);
+    // if (!teacher) throw new NotFoundException(`Teacher ${id} not found.`);
     return teacher;
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updatedTeacher: Teacher) {
     const teacher = this.teacherService.update(+id, updatedTeacher);
-    if (!teacher) throw new NotFoundException(`Teacher ${id} not found.`);
+    // if (!teacher) throw new NotFoundException(`Teacher ${id} not found.`);
     return teacher;
   }
 
   @Post()
-  create(@Body() newTeacher: Teacher) {
+  create(@Body() newTeacher: CreateTeacherDto) {
     const result = this.teacherService.create(newTeacher);
-    if (!result)
-      throw new ForbiddenException(`Teacher ${newTeacher.id} already exists.`);
+    // if (!result)
+      // throw new ForbiddenException(`Teacher ${newTeacher.id} already exists.`);
     return result;
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     const result = this.teacherService.remove(+id);
-    if (!result) throw new NotFoundException(`Teacher ${id} not found.`);
+    // if (!result) throw new NotFoundException(`Teacher ${id} not found.`);
     return result;
   }
 
-  @Put(':teacherId/groups/:groupId')
-  addGroupToTeacher(
-    @Param('teacherId') id: string,
-    @Param('groupId') groupId: string,
-  ) {
-    const result = this.teacherService.addGroupToTeacher(+id, groupId);
-    if (!result)
-      throw new ForbiddenException(
-        `Teacher ${id} not found or this teacher already has group ${groupId}.`,
-      );
-    return result;
-  }
+  // @Put(':teacherId/newGroupId')
+  // addGroupToTeacher(
+  //   @Param('teacherId') id: string,
+  //   @Param('groupId') groupId: string,
+  // ) {
+  //   const result = this.teacherService.addGroupToTeacher(+id, groupId);
+  //   if (!result)
+  //     throw new ForbiddenException(
+  //       `Teacher ${id} not found or this teacher already has group ${groupId}.`,
+  //     );
+  //   return result;
+  // }
 }

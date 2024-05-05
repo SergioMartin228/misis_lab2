@@ -1,57 +1,60 @@
 import { HttpStatus, Injectable, Module } from '@nestjs/common';
 import { DatasourceService } from '../datasource/datasource.service';
 import { Teacher } from './teacher.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Group } from 'src/groups/group.entity';
+import { Student } from 'src/students/student.entity';
+import { In, Repository } from 'typeorm';
+import { CreateTeacherDto } from './dto/CreateTeacher.dto';
 
 @Injectable()
 export class TeachersService {
-  constructor(private readonly datasourceService: DatasourceService) {}
+  constructor(
+    @InjectRepository(Group)
+    private readonly groupRepository: Repository<Group>, // "внедряем" репозиторий Group в сервис
+    @InjectRepository(Teacher)
+    private readonly teacherRepository: Repository<Teacher>,
+  ) {}
 
-  create(teacher: Teacher) {
-    if (this.findOne(teacher.id)) return null;
-    this.datasourceService.getTeachers().push(teacher);
+  async create(newTeacherDto: CreateTeacherDto): Promise<Teacher> {
+    const teacher = this.teacherRepository.create();
+    teacher.name = newTeacherDto.name;
+    teacher.subject = newTeacherDto.subject;
+    const groups = await this.groupRepository.findBy({
+      //получаем массив групп по id
+      id: In(newTeacherDto.groupIDs),
+    });
+    teacher.groups = groups;
+    await this.teacherRepository.save(teacher); //сохраняем объект в БД
     return teacher;
   }
 
-  findOne(id: number) {
-    return this.datasourceService
-      .getTeachers()
-      .find((teacher) => id === teacher.id);
+  async findOne(id: number): Promise<Teacher> {
+    return this.teacherRepository.findOne({
+      where: { id },
+      relations: { groups: true },
+    });
   }
 
-  findAll(): Teacher[] {
-    return this.datasourceService.getTeachers();
+  async findAll(): Promise<Teacher[]> {
+    const teachers = await this.teacherRepository.find({
+      relations: {
+        groups: true,
+      },
+    });
+    return teachers;
   }
 
-  update(id: number, updatedTeacher: Teacher) {
-    const index = this.datasourceService
-      .getTeachers()
-      .findIndex((teacher) => id === teacher.id);
-
-    if (index == -1) return null;
-    this.datasourceService.getTeachers()[index] = updatedTeacher;
-
-    return this.datasourceService.getTeachers()[index];
+  async update(id: number, updatedTeacher: Teacher) {
+    const teacher = await this.teacherRepository.findOne({ where: { id } });
+    teacher.name = updatedTeacher.name;
+    teacher.subject = updatedTeacher.subject;
+    teacher.groups = updatedTeacher.groups;
+    await this.teacherRepository.save(teacher);
+    return teacher;
   }
 
-  remove(id: number) {
-    const index = this.datasourceService
-      .getTeachers()
-      .findIndex((teacher) => id === teacher.id);
-
-    if (index == -1) return null;
-    this.datasourceService.getTeachers().splice(index, 1);
-    return HttpStatus.OK;
-  }
-
-  addGroupToTeacher(id: number, groupId: string) {
-    const index = this.datasourceService
-      .getTeachers()
-      .findIndex((teacher) => id === teacher.id);
-    const teacher = this.datasourceService.getTeachers()[index];
-    if (index == -1 || teacher.groupIds.includes(groupId)) {
-      return null;
-    }
-    this.datasourceService.getTeachers()[index].groupIds.push(groupId);
-    return this.datasourceService.getTeachers()[index];
+  async remove(id: number) {
+    this.teacherRepository.delete({ id });
   }
 }
