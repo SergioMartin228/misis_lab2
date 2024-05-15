@@ -9,7 +9,7 @@ const ormConfig: DataSource = new DataSource({
   password: 'password',
   entities: ['dist/**/*.entity{.ts,.js}'],
   logging: true,
-  synchronize: true,
+  synchronize: false,
   migrationsTableName: 'migrations',
   migrations: ['dist/src/migrations/*{.ts,.js}'],
 });

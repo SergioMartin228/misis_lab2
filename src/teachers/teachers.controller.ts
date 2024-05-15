@@ -12,16 +12,20 @@ import {
 import { TeachersService } from './teachers.service';
 import { Teacher } from './teacher.entity';
 import { CreateTeacherDto } from './dto/CreateTeacher.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Преподаватели")
 @Controller('teachers')
 export class TeachersController {
   constructor(private readonly teacherService: TeachersService) {}
 
+  @ApiOperation({ summary: 'Получение всех преподавателей' })
   @Get()
   findAll() {
     return this.teacherService.findAll();
   }
 
+  @ApiOperation({ summary: 'Получение преподателя по id' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     const teacher = this.teacherService.findOne(+id);
@@ -29,6 +33,7 @@ export class TeachersController {
     return teacher;
   }
 
+  @ApiOperation({ summary: 'Изменение преподавателя' })
   @Put(':id')
   update(@Param('id') id: string, @Body() updatedTeacher: Teacher) {
     const teacher = this.teacherService.update(+id, updatedTeacher);
@@ -36,6 +41,7 @@ export class TeachersController {
     return teacher;
   }
 
+  @ApiOperation({ summary: 'Создание преподавателя' })
   @Post()
   create(@Body() newTeacher: CreateTeacherDto) {
     const result = this.teacherService.create(newTeacher);
@@ -44,6 +50,7 @@ export class TeachersController {
     return result;
   }
 
+  @ApiOperation({ summary: 'Удаление преподавателя' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     const result = this.teacherService.remove(+id);
