@@ -15,11 +15,11 @@ export class Teacher {
   name: string; // Имя преподавателя
   @Column()
   subject: string; // Предмет
-  @ManyToMany(() => Group, (group) => group.teachers)
-  @JoinTable({
-    name: 'teacher_group',
-    joinColumn: { name: 'teacher_id' },
-    inverseJoinColumn: { name: 'group_id' },
-  })
+  @ManyToMany(() => Group, (group) => group.teachers, { onDelete: 'CASCADE' })
+  // @JoinTable({
+  //   name: 'teacher_group',
+  //   joinColumn: { name: 'teacher_id' },
+  //   inverseJoinColumn: { name: 'group_id' },
+  // })
   groups: Group[]; // Группы, у которых ведет этот преподаватель
 }
